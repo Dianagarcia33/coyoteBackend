@@ -6,29 +6,29 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-     public function login(Request $request)
-{
-    $credentials = $request->only('email', 'password');
-
-    if (!$token = auth()->attempt($credentials)) {
-        return response()->json(['error' => 'Unauthorized'], 401);
-    }
-
-    return response()->json([
-        'access_token' => $token,
-        'token_type' => 'bearer',
-        'expires_in' => auth()->factory()->getTTL() * 60
-    ]);
-}
-
-    public function logout()
+      public function login(Request $request)
     {
-        auth('api')->logout();
-        return response()->json(['message' => 'Sesión cerrada']);
+        $credentials = $request->only('email', 'password');
+
+        if (!$token = auth('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+        ]);
     }
 
     public function me()
     {
         return response()->json(auth('api')->user());
+    }
+
+    public function logout()
+    {
+        auth('api')->logout();
+        return response()->json(['message' => 'Sesión cerrada']);
     }
 }
